@@ -13,10 +13,10 @@ $sql = $con_local->query($query);
 
 //########################### API PARA OBTENER REPOS #####################################
 
-$url = "https://gitlab.com/api/v4/users/5279164/projects?pagination=keyset&per_page=100&order_by=id&sort=asc";
+$url = "https://gitlab.com/api/v4/users/##IDUSER##/projects?pagination=keyset&per_page=100&order_by=id&sort=asc";
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "PRIVATE-TOKEN: gKtsidkUkKLiKHxbxzzb"));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "PRIVATE-TOKEN: ##idTOKEN##"));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($ch);
 curl_close($ch);
@@ -38,12 +38,12 @@ foreach ($projects as $project) {
 $x = 0;
 while ($resultado = $sql->fetch_array(MYSQLI_ASSOC)) {
 
- $args2 = json_encode(array("name" => $resultado['ip'], "user_id" => "5279164"));
+ $args2 = json_encode(array("name" => $resultado['ip'], "user_id" => "##USERID##"));
 //  var_dump($args2);
  $url2 = "https://gitlab.com/api/v4/projects";
  $ch2 = curl_init();
  curl_setopt($ch2, CURLOPT_URL, $url2);
- curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "PRIVATE-TOKEN: gKtsidkUkKLiKHxbxzzb"));
+ curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "PRIVATE-TOKEN: ##TOKENID##"));
  if (isset($args2)) {
   curl_setopt($ch2, CURLOPT_POST, 1);
   // curl_setopt($ch, CURLOPT_POSTFIELDS,$args2);
@@ -64,7 +64,7 @@ while ($resultado = $sql->fetch_array(MYSQLI_ASSOC)) {
    $url2 = "https://gitlab.com/api/v4/projects/$idProyectos[$i]/repository/branches";
    $ch2 = curl_init();
    curl_setopt($ch2, CURLOPT_URL, $url2);
-   curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "PRIVATE-TOKEN: gKtsidkUkKLiKHxbxzzb"));
+   curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "PRIVATE-TOKEN: ##TOKENID##"));
    if (isset($args2)) {
     curl_setopt($ch2, CURLOPT_POST, 1);
     // curl_setopt($ch, CURLOPT_POSTFIELDS,$args2);
@@ -80,9 +80,9 @@ while ($resultado = $sql->fetch_array(MYSQLI_ASSOC)) {
    }
   }
  }
- if ($resultado['system'] == "Vicidial" || $resultado['system'] == "Integra") {
+ if ($resultado['system'] == "##TIPO##" || $resultado['system'] == "##TIPO##") {
   $ruta = "/srv/www/htdocs/";
- } elseif ($resultado['system'] == "SistemaWeb" || $resultado['system'] == "Issabel") {
+ } elseif ($resultado['system'] == "##TIPO##" || $resultado['system'] == "##TIPO##") {
   $ruta = "/var/www/html/";
  }
 
@@ -98,7 +98,7 @@ while ($resultado = $sql->fetch_array(MYSQLI_ASSOC)) {
 //  echo $x . "\n";
 
  //SE VALIDA QUE NO SEAN NINGUNO DE ESOS SERVIDORES YA QUE ESOS POR EL MOMENTO ESTAN PROHIBIDOS
- if ($ipServer != '104.248.239.229' && $ipServer != '68.183.120.226' && $ipServer != '10.8.0.46') {
+ if ($ipServer != '##IPPROHIBIDA##' && $ipServer != '##IPPROHIBIDA##' && $ipServer != '##IPPROHIBIDA##') {
   echo $ipServerGuion;
 
   //SE VALIDA SI EL SERVIDOR TIENE INSTALADO ALGUNA VERSION DE GIT SI NO -- SE INSTALA RPM Y DESPUES GIT A LA VERSION MAS RECIENTE
@@ -109,14 +109,14 @@ while ($resultado = $sql->fetch_array(MYSQLI_ASSOC)) {
 
   //SE CREA COPIA DE SEGURIDAD DE DB DEPENDIENDO EL SISTEMA 
   if($resultado['system'] == 'Issabel'){
-    shell_exec("ssh root@$ipServer 'mysqldump  --password='netillo123' asterisk > /var/www/html/respaldo.sql'");
+    shell_exec("ssh root@$ipServer 'mysqldump  --password='##PASS##' asterisk > /var/www/html/respaldo.sql'");
   }elseif ($resultado['system'] == 'Integra' || $resultado['system'] == 'Vicidial') {
-    shell_exec("ssh root@$ipServer 'mysqldump -u cron --password='1234' asterisk > /var/www/htdocs/respaldo.sql'");
+    shell_exec("ssh root@$ipServer 'mysqldump -u ##USER## --password='##PASS##' asterisk > /var/www/htdocs/respaldo.sql'");
   }
   exit('termino wey');
 
   // comando que conecta con el servidor, crea las credenciales de Git despues genera un repositorio y hace los comandos de conectarse a la rama y generar una rama con el nombre de la fecha actual, por ultimo elimina las credenciales de Git
-  shell_exec("ssh root@$ipServer 'echo 'https://victornbx:Nbx20x19x@gitlab.com' > .git-credentials;' 'cd $ruta;' 'rm -f .git;' 'git init;' 'git config --global user.email 'v.valdovinos@nbxsoluciones.com';' 'git config --global user.name 'victornbx';' 'git config credential.helper store;' 'git remote add origin https://gitlab.com/victornbx/$ipServerGuion;' 'git checkout -b $rama;' 'git add .;' 'git commit -m 'Initial' ;' 'git push -f origin $rama;' 'cd;' 'rm -f .git-credentials;' 'exit;'");
+  shell_exec("ssh root@$ipServer 'echo 'https://##USER:##PASS##@gitlab.com' > .git-credentials;' 'cd $ruta;' 'rm -f .git;' 'git init;' 'git config --global user.email 'v.valdovinos@##EMAIL##';' 'git config --global user.name '##NAME##';' 'git config credential.helper store;' 'git remote add origin https://gitlab.com/##USER##/$ipServerGuion;' 'git checkout -b $rama;' 'git add .;' 'git commit -m 'Initial' ;' 'git push -f origin $rama;' 'cd;' 'rm -f .git-credentials;' 'exit;'");
  }
 
 }
@@ -126,7 +126,7 @@ while ($resultado = $sql->fetch_array(MYSQLI_ASSOC)) {
 // $url = "https://gitlab.com/api/v4/projects/19971924/repository/files/app%Accounts?ref=dev";
 // $ch = curl_init();
 // curl_setopt($ch, CURLOPT_URL,$url);
-// curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json","PRIVATE-TOKEN: gKtsidkUkKLiKHxbxzzb"));
+// curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json","PRIVATE-TOKEN: ##TOKEN"));
 
 // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 // $result = curl_exec ($ch);
@@ -142,7 +142,7 @@ while ($resultado = $sql->fetch_array(MYSQLI_ASSOC)) {
 // $url2 = "https://gitlab.com/api/v4/projects/20267855/repository/branches";
 // $ch2 = curl_init();
 // curl_setopt($ch2, CURLOPT_URL,$url2);
-// curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-Type: application/json","PRIVATE-TOKEN: gKtsidkUkKLiKHxbxzzb"));
+// curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-Type: application/json","PRIVATE-TOKEN: ##TOKEN"));
 // if(isset($args2)){
 //     curl_setopt($ch2, CURLOPT_POST, 1);
 //     // curl_setopt($ch, CURLOPT_POSTFIELDS,$args2);
